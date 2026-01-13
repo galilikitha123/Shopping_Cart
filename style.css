@@ -10,6 +10,11 @@ body{font-family:'Inter','SF Pro Display',-apple-system,BlinkMacSystemFont,sans-
 .nav-link a{text-decoration:none;color:var(--text-color);font-weight:500;position:relative;padding:.5rem 0;transition:var(--transition)}
 .nav-link a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background-color:var(--primary-color);transition:var(--transition)}
 .nav-link a:hover::after{width:100%}
+
+.nav-link { 
+  position: relative; 
+}
+
 .icon-btn{background:transparent;border:1px solid var(--gray-300);padding:.45rem .6rem;border-radius:8px;cursor:pointer;color:var(--text-color)}
 .badge{background:var(--secondary-color);color:#fff;border-radius:999px;padding:0 .4rem;margin-left:4px;font-size:.75rem;display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px}
 
