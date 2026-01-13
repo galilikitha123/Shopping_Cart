@@ -1,379 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fresh Harvest Market</title>
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fruits &amp; Veggies — Fresh Harvest Market</title>
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
+  <!-- Auth Gate (force login/register before site) -->
+  <div id="authGate" class="auth-gate" aria-hidden="false">
+    <div class="auth-gate-content">
+      <div class="logo big"><p>Fresh Harvest Market</p></div>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="login">Login</button>
+        <button class="tab-btn" data-tab="register">Register</button>
+      </div>
+      <form id="gateLogin" class="gate-form active" novalidate>
+        <div class="form-group"><input type="email" placeholder="Email" required></div>
+        <div class="form-group"><input type="password" placeholder="Password" required></div>
+        <label class="remember"><input type="checkbox" id="rememberMe"> Remember me</label>
+        <button type="submit" class="btn">Login</button>
+      </form>
+      <form id="gateRegister" class="gate-form" novalidate>
+        <div class="form-group"><input type="text" placeholder="Full Name" required></div>
+        <div class="form-group"><input type="email" placeholder="Email" required></div>
+        <div class="form-group"><input type="password" placeholder="Password" required></div>
+        <div class="form-group"><input type="password" placeholder="Confirm Password" required></div>
+        <button type="submit" class="btn">Create Account</button>
+      </form>
+      <p class="gate-note">Please login or register to continue.</p>
+    </div>
+  </div>
 
-    <!-- Header section -->
-    <header class="header" id="header">
-        <div class="logo">
-            <p>Fresh Harvest Market</p>
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="logo"><p>Fresh Harvest Market</p></div>
+    <nav class="navigation" aria-label="Primary">
+      <ul class="nav-links">
+        <li class="nav-link"><a href="#home">Home</a></li>
+        <li class="nav-link"><a href="#catalog">Catalog</a></li>
+        <li class="nav-link"><a href="#goodies" data-scroll="goodies">Goodies</a></li>
+        <li class="nav-link"><a href="#offers">Offers</a></li>
+      </ul>
+    </nav>
+    <nav class="utils" aria-label="Utilities">
+      <ul class="nav-links">
+        <li class="nav-link">
+          <button class="icon-btn" id="wishlistBtn" aria-label="Open wishlist"><i class="fa-solid fa-heart"></i></button>
+          <span class="badge" id="wishlistCount">0</span>
+        </li>
+        <li class="nav-link">
+          <button class="icon-btn" id="cartBtn" aria-label="Open cart"><i class="fa-solid fa-cart-shopping"></i></button>
+          <span class="cart-count" style="display:none">0</span>
+        </li>
+        <li class="nav-link"><button class="icon-btn" id="userBtn" aria-label="Profile"><i class="fa-solid fa-user"></i></button></li>
+        <li class="nav-link"><button class="icon-btn" id="darkModeToggle" aria-label="Dark mode"><i class="fa-solid fa-moon"></i></button></li>
+        <li class="nav-link"><span id="menu" class="menu"><i class="fa-solid fa-bars"></i></span></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Banner -->
+  <section class="banner" id="home">
+    <div class="slide">
+      <div class="slide-details" data-aos="fade-up" data-aos-easing="ease-in-out">
+        <h1>Fresh Fruits &amp; Vegetables Delivered Daily</h1>
+        <p>Get farm-fresh produce and delicious goodies delivered straight to your doorstep.</p>
+        <button class="btn" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Shop Now</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catalog (single grid, all filters apply here) -->
+  <section class="products-section" id="catalog">
+    <h1 class="section-title">Catalog</h1>
+    <div class="controls">
+      <div class="filter-group">
+        <label for="categorySelect">Category</label>
+        <select id="categorySelect">
+          <option value="All">All</option>
+          <option value="Fruits">Fruits</option>
+          <option value="Vegetables">Vegetables</option>
+          <option value="Goodies">Goodies</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="priceRange">Max Price: <span id="priceDisplay">$50.00</span></label>
+        <input type="range" id="priceRange" min="1" max="50" step="1" value="50">
+      </div>
+      <div class="filter-group"><input id="searchInput" type="search" placeholder="Search products..." /></div>
+      <div class="filter-group">
+        <label for="sortSelect">Sort</label>
+        <select id="sortSelect">
+          <option value="popular">Popular</option>
+          <option value="priceAsc">Price: Low to High</option>
+          <option value="priceDesc">Price: High to Low</option>
+          <option value="nameAsc">Name: A → Z</option>
+          <option value="nameDesc">Name: Z → A</option>
+        </select>
+      </div>
+    </div>
+    <div class="products-list" id="productGrid"></div>
+    <div class="pagination" id="pagination"></div>
+  </section>
+
+  <!-- Most Popular Goodies (programmatic; always visible; separate section) -->
+  <section class="products-section" id="goodies">
+    <h1 class="section-title">Most Popular Goodies</h1>
+    <div class="products-list" id="goodiesGrid"></div>
+  </section>
+
+  <!-- Newsletter & Footer -->
+  <section class="newsletter">
+    <h2>Subscribe to Fresh Harvest Market</h2>
+    <p>Get fresh deals delivered to your inbox!</p>
+    <form id="subscribeForm" class="subscribe-form" novalidate>
+      <input id="subscribeEmail" type="email" placeholder="Enter your email" required>
+      <button class="btn" type="submit">Subscribe</button>
+    </form>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-section">
+      <h1>Contact Us</h1>
+      <ul class="footer-list">
+        <li>freshharvestmarket.com</li>
+        <li>info@freshharvestmarket.com</li>
+        <li>123 Produce Lane, Fruitville, IN 12345</li>
+        <li>+91- 1234567890</li>
+        <li class="border-list"></li>
+        <li class="socials">
+          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-facebook-f"></i>
+          <i class="fa-brands fa-youtube"></i>
+          <i class="fa-brands fa-twitter"></i>
+        </li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h1>Quick Links</h1>
+      <ul class="footer-list">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#catalog">Catalog</a></li>
+        <li><a href="#goodies">Goodies</a></li>
+        <li>About Us</li>
+        <li>Contact Us</li>
+        <li>Terms &amp; Conditions</li>
+        <li>Return Policy</li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h1>Recently Viewed</h1>
+      <ul class="footer-list" id="recentlyViewed"></ul>
+    </div>
+  </footer>
+
+  <!-- Cart Modal -->
+  <div class="cart-modal" id="cartModal">
+    <div class="cart-modal-content">
+      <div class="cart-header">
+        <h2>Shopping Cart</h2>
+        <button class="close-cart">×</button>
+      </div>
+      <div class="cart-content"></div>
+    </div>
+  </div>
+
+  <!-- Wishlist Modal -->
+  <div class="wishlist-modal" id="wishlistModal">
+    <div class="wishlist-modal-content">
+      <div class="wishlist-header">
+        <h2>Wishlist</h2>
+        <button class="close-wishlist">×</button>
+      </div>
+      <div class="wishlist-content"></div>
+    </div>
+  </div>
+
+  <!-- Quick View Modal -->
+  <div class="modal" id="quickViewModal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Quick View</h3>
+        <button class="close-modal" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Profile Modal (user details only) -->
+  <div class="modal" id="profileModal" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Profile</h3>
+        <button class="close-modal" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="profile-info">
+          <p class="user-name"></p>
+          <p class="user-email"></p>
         </div>
+        <button class="btn logout-btn">Logout</button>
+      </div>
+    </div>
+  </div>
 
-        <nav class="navigation">
-            <ul class="nav-links">
-                <li class="nav-link"><a href="#">Home</a></li>
-                <li class="nav-link"><a href="#">Fruits</a></li>
-                <li class="nav-link"><a href="#">Vegetables</a></li>
-                <li class="nav-link"><a href="#">Goodies</a></li>
-                <li class="nav-link"><a href="#">Offers</a></li>
-            </ul>
-        </nav>
-
-        <nav class="utils">
-            <ul class="nav-links">
-                <li class="nav-link"><i class="fa-solid fa-heart"></i></li>
-                <li class="nav-link"><i class="fa-solid fa-cart-shopping"></i></li>
-                <li class="nav-link"><i class="fa-solid fa-user"></i></li>
-                <li class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- Banner section -->
-    <section class="banner">
-        <div class="slide">
-            <div class="slide-details" data-aos="fade-up" data-aos-easing="ease-in-out">
-                <h1>Fresh Fruits & Vegetables Delivered Daily</h1>
-                <p>
-                    Get farm-fresh produce and delicious goodies delivered straight to your doorstep.
-                </p>
-                <button class="btn" onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})">
-                    Shop Now
-                </button>   
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured section -->
-    <section class="featured">
-        <div class="featured-box-1">
-            <div class="overlay">
-                <button class="btn btn-white">
-                    Shop Fruits
-                </button>
-            </div>
-            <div class="bg-image">
-                <img src="./images/fruits-assortment.jpg" alt="Fruits">
-            </div>
-        </div>
-
-        <div class="featured-box-2">
-            <div class="featured-box-2-box-1">
-                <div class="overlay">
-                    <button class="btn btn-white">
-                        Shop Vegetables
-                    </button>
-                </div>
-                <div class="bg-image">
-                    <img src="./images/vegetables-assortment.jpg" alt="Vegetables">
-                </div> 
-            </div>
-            <div class="featured-box-2-box-2">
-                <div class="overlay">
-                    <button class="btn btn-white">
-                        Organic Section
-                    </button>
-                </div>
-                <div class="bg-image">
-                    <img src="./images/organic-produce.jpg" alt="Organic Produce">
-                </div> 
-            </div>
-            <div class="featured-box-2-box-3">
-                <div class="overlay">
-                    <button class="btn btn-white">
-                        Exotic Fruits
-                    </button>
-                </div>
-                <div class="bg-image">
-                    <img src="./images/exotic-fruits.jpg" alt="Exotic Fruits">
-                </div> 
-            </div>
-        </div>
-
-        <div class="featured-box-3">
-            <div class="overlay">
-                <button class="btn btn-white">
-                    Shop Goodies
-                </button>
-            </div>
-            <div class="bg-image">
-                <img src="./images/goodies-assortment.jpg" alt="Goodies">
-            </div>
-        </div>
-    </section>
-
-    <!-- Products section -->
-    <section class="products" id="products">
-        <h1 class="section-title">Top Products Of The Season</h1>
-        <div class="products-list">
-            <div class="product" data-aos="fade-up" data-aos-delay="200">
-                <div class="product-image">
-                    <div class="main-image">
-                        <img src="./images/apple.jpg" alt="Apple">
-                    </div>
-                    <div class="effect-image">
-                        <img src="./images/apple-cut.jpg" alt="Apple Cut">
-                    </div>
-                    <div class="overlay-image">
-                        <button class="btn btn-white">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-                <div class="product-details">
-                    <p class="product-name">Fresh Apples</p>
-                    <p>Price - $2.99/lb</p> 
-                </div>
-            </div>
-
-            <div class="product" data-aos="fade-up" data-aos-delay="200">
-                <div class="product-image">
-                    <div class="main-image">
-                        <img src="./images/banana.jpg" alt="Banana">
-                    </div>
-                    <div class="effect-image">
-                        <img src="./images/banana-bunch.jpg" alt="Banana Bunch">
-                    </div>
-                    <div class="overlay-image">
-                        <button class="btn btn-white">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-                <div class="product-details">
-                    <p class="product-name">Ripe Bananas</p>
-                    <p>Price - $1.99/lb</p> 
-                </div>
-            </div>
-
-            <div class="product" data-aos="fade-up" data-aos-delay="200">
-                <div class="product-image">
-                    <div class="main-image">
-                        <img src="./images/carrot.jpg" alt="Carrot">
-                    </div>
-                    <div class="effect-image">
-                        <img src="./images/carrot-sliced.jpg" alt="Sliced Carrot">
-                    </div>
-                    <div class="overlay-image">
-                        <button class="btn btn-white">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-                <div class="product-details">
-                    <p class="product-name">Crunchy Carrots</p>
-                    <p>Price - $1.50/lb</p> 
-                </div>
-            </div>
-
-            <div class="product" data-aos="fade-up" data-aos-delay="200">
-                <div class="product-image">
-                    <div class="main-image">
-                        <img src="./images/tomato.jpg" alt="Tomato">
-                    </div>
-                    <div class="effect-image">
-                        <img src="./images/tomato-sliced.jpg" alt="Sliced Tomato">
-                    </div>
-                    <div class="overlay-image">
-                        <button class="btn btn-white">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-                <div class="product-details">
-                    <p class="product-name">Juicy Tomatoes</p>
-                    <p>Price - $2.49/lb</p> 
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Categories section -->
-    <section class="categories">
-        <div class="category" data-aos="zoom-in" data-aos-delay="200">
-            <div class="cat-img">
-                <img src="./images/leafy-greens.jpg" alt="Leafy Greens">
-            </div>
-            <div class="product-details">
-                <p class="product-name">Leafy Greens</p>
-            </div>
-        </div>  
-
-        <div class="category" data-aos="zoom-in" data-aos-delay="200">
-            <div class="cat-img">
-                <img src="./images/citrus-fruits.jpg" alt="Citrus Fruits">
-            </div>
-            <div class="product-details">
-                <p class="product-name">Citrus Fruits</p>
-            </div>
-        </div>  
-
-        <div class="category" data-aos="zoom-in" data-aos-delay="200">
-            <div class="cat-img">
-                <img src="./images/root-vegetables.jpg" alt="Root Vegetables">
-            </div>
-            <div class="product-details">
-                <p class="product-name">Root Vegetables</p>
-            </div>
-        </div>  
-    </section>
-
-    <!-- Products section 2 -->
-    <section class="products">
-        <h1 class="section-title">Most Popular Goodies</h1>
-        <div class="products-list">
-            <div class="product" data-aos="fade-up" data-aos-delay="200">
-                <div class="product-image">
-                    <div class="main-image">
-                        <img src="./images/granola.jpg" alt="Granola">
-                    </div>
-                    <div class="effect-image">
-                        <img src="./images/granola-bowl.jpg" alt="Granola Bowl">
-                    </div>
-                    <div class="overlay-image">
-                        <button class="btn btn-white">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-                <div class="product-details">
-                    <p class="product-name">Crunchy Granola</p>
-                    <p>Price - $5.99/pack</p> 
-                </div>
-            </div>
-
-            <div class="product" data-aos="fade-up" data-aos-delay="200">
-                <div class="product-image">
-                    <div class="main-image">
-                        <img src="./images/dried-fruits.jpg" alt="Dried Fruits">
-                    </div>
-                    <div class="effect-image">
-                        <img src="./images/dried-fruits-mix.jpg" alt="Dried Fruits Mix">
-                    </div>
-                    <div class="overlay-image">
-                        <button class="btn btn-white">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-                <div class="product-details">
-                    <p class="product-name">Mixed Dried Fruits</p>
-                    <p>Price - $7.99/pack</p> 
-                </div>
-            </div>
-
-            <div class="product" data-aos="fade-up" data-aos-delay="200">
-                <div class="product-image">
-                    <div class="main-image">
-                        <img src="./images/nuts.jpg" alt="Nuts">
-                    </div>
-                    <div class="effect-image">
-                        <img src="./images/nuts-mix.jpg" alt="Mixed Nuts">
-                    </div>
-                    <div class="overlay-image">
-                        <button class="btn btn-white">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-                <div class="product-details">
-                    <p class="product-name">Assorted Nuts</p>
-                    <p>Price - $8.99/pack</p> 
-                </div>
-            </div>
-
-            <div class="product" data-aos="fade-up" data-aos-delay="200">
-                <div class="product-image">
-                    <div class="main-image">
-                        <img src="./images/honey.jpg" alt="Honey">
-                    </div>
-                    <div class="effect-image">
-                        <img src="./images/honey-comb.jpg" alt="Honey Comb">
-                    </div>
-                    <div class="overlay-image">
-                        <button class="btn btn-white">
-                            Add To Cart
-                        </button>
-                    </div>
-                </div>
-                <div class="product-details">
-                    <p class="product-name">Pure Honey</p>
-                    <p>Price - $9.99/jar</p> 
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer section -->
-    <footer class="footer">
-        <div class="footer-section">
-            <h1>Contact Us</h1>
-            <ul class="footer-list">
-                <li>freshharvestmarket.com</li>
-                <li>info@freshharvestmarket.com</li>
-                <li>123 Produce Lane, Fruitville, IN 12345</li>
-                <li>+91- 1234567890</li>
-                <li class="border-list"></li>
-                <li class="socials">
-                    <i class="fa-brands fa-instagram"></i>
-                    <i class="fa-brands fa-facebook-f"></i>
-                    <i class="fa-brands fa-youtube"></i>
-                    <i class="fa-brands fa-twitter"></i>
-                </li>
-            </ul>
-        </div>
-
-        <div class="footer-section">
-            <h1>Quick Links</h1>
-            <ul class="footer-list">
-                <li>Home</li>
-                <li>Fruits</li>
-                <li>Vegetables</li>
-                <li>Goodies</li>
-                <li>About Us</li>
-                <li>Contact Us</li>
-                <li>Terms & Conditions</li>
-                <li>Return Policy</li>
-            </ul>
-        </div>
-
-        <div class="footer-section">
-            <h1>Subscribe to Fresh Harvest Market</h1>
-            <ul class="footer-list">
-                <li>Get fresh deals delivered to your inbox!</li>
-                <li class="sub">
-                    <input type="text" placeholder="Enter your email">
-                    <button class="btn">Subscribe</button>
-                </li>
-            </ul>
-        </div>
-    </footer>
-
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script>
-      AOS.init();
-
-      let headerVisible = false;
-      document.getElementById("menu").addEventListener("click", function() {
-          if (headerVisible === false) {
-              document.getElementById("header").style.height = "270px";
-              headerVisible = true;
-          } else {
-              document.getElementById("header").style.height = "50px";
-              headerVisible = false;
-          }
-      });
-    </script>
-
-    <script src="script.js"></script>
-    <script src="cart.js"></script>
-    <script src="auth.js"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script src="./data.js"></script>
+  <script src="./cart.js"></script>
+  <script src="./auth.js"></script>
+  <script src="./wishlist.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>

@@ -1,215 +1,30 @@
-// cart.js
 class ShoppingCart {
-    constructor() {
-        this.items = JSON.parse(localStorage.getItem('cart')) || [];
-        this.total = 0;
-        this.updateCartCount();
-    }
-
-    
-    removeItem(productName) {
-        this.items = this.items.filter(item => item.name !== productName);
-        this.saveCart();
-        this.updateCartCount();
-        this.updateCartUI();
-    }
-
-    updateQuantity(productName, quantity) {
-        const item = this.items.find(item => item.name === productName);
-        if (item) {
-            item.quantity = parseInt(quantity);
-            if (item.quantity <= 0) {
-                this.removeItem(productName);
-            }
-        }
-        this.saveCart();
-        this.updateCartCount();
-        this.updateCartUI();
-    }
-
-    saveCart() {
-        localStorage.setItem('cart', JSON.stringify(this.items));
-    }
-
-    // Update the updateCartCount method in the ShoppingCart class
-updateCartCount() {
-    const cartCount = this.items.reduce((total, item) => total + item.quantity, 0);
-    const cartCountElement = document.querySelector('.cart-count');
-    
-    if (cartCountElement) {
-        cartCountElement.textContent = cartCount;
-        
-        // Remove existing animation
-        cartCountElement.classList.remove('bump');
-        
-        // Trigger reflow to restart animation
-        void cartCountElement.offsetWidth;
-        
-        // Add animation class
-        cartCountElement.classList.add('bump');
-        
-        // Hide count if zero
-        cartCountElement.style.display = cartCount > 0 ? 'flex' : 'none';
-    }
-}
-
-// Update the addItem method to scroll to top of modal
-addItem(product) {
-    const existingItem = this.items.find(item => item.name === product.name);
-    
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        this.items.push({
-            name: product.name,
-            price: product.price,
-            quantity: 1,
-            image: product.image
-        });
-    }
-    
-    this.saveCart();
-    this.updateCartCount();
-    this.updateCartUI();
-    
-    // Scroll modal to top when new item is added
-    const cartContent = document.querySelector('.cart-modal-content');
-    if (cartContent) {
-        cartContent.scrollTop = 0;
-    }
-}
-
-    calculateTotal() {
-        return this.items.reduce((total, item) => {
-            const price = parseFloat(item.price.replace('$', ''));
-            return total + (price * item.quantity);
-        }, 0).toFixed(2);
-    }
-
-    updateCartUI() {
-        const cartModal = document.querySelector('.cart-modal');
-        if (!cartModal) return;
-
-        const cartContent = cartModal.querySelector('.cart-content');
-        cartContent.innerHTML = '';
-
-        if (this.items.length === 0) {
-            cartContent.innerHTML = '<p class="empty-cart">Your cart is empty</p>';
-        } else {
-            this.items.forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'cart-item';
-                itemElement.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-                    <div class="cart-item-details">
-                        <h3>${item.name}</h3>
-                        <p>Price: ${item.price}</p>
-                        <div class="quantity-controls">
-                            <button class="quantity-btn minus">-</button>
-                            <input type="number" value="${item.quantity}" min="1" class="quantity-input">
-                            <button class="quantity-btn plus">+</button>
-                        </div>
-                    </div>
-                    <button class="remove-item">×</button>
-                `;
-                cartContent.appendChild(itemElement);
-
-                // Add event listeners for quantity controls
-                const quantityInput = itemElement.querySelector('.quantity-input');
-                const minusBtn = itemElement.querySelector('.minus');
-                const plusBtn = itemElement.querySelector('.plus');
-                const removeBtn = itemElement.querySelector('.remove-item');
-
-                minusBtn.addEventListener('click', () => {
-                    const newQuantity = parseInt(quantityInput.value) - 1;
-                    this.updateQuantity(item.name, newQuantity);
-                });
-
-                plusBtn.addEventListener('click', () => {
-                    const newQuantity = parseInt(quantityInput.value) + 1;
-                    this.updateQuantity(item.name, newQuantity);
-                });
-
-                quantityInput.addEventListener('change', (e) => {
-                    this.updateQuantity(item.name, e.target.value);
-                });
-
-                removeBtn.addEventListener('click', () => {
-                    this.removeItem(item.name);
-                });
-            });
-
-            // Add total
-            const totalElement = document.createElement('div');
-            totalElement.className = 'cart-total';
-            totalElement.innerHTML = `
-                <h3>Total: $${this.calculateTotal()}</h3>
-                <button class="btn checkout-btn">Proceed to Checkout</button>
-            `;
-            cartContent.appendChild(totalElement);
-        }
-    }
-}
-
-// Initialize cart functionality
-document.addEventListener('DOMContentLoaded', () => {
-    // Add cart icon and modal to the DOM
-    const cartIconContainer = document.querySelector('.fa-cart-shopping').parentElement;
-    cartIconContainer.innerHTML += '<span class="cart-count">0</span>';
-
-    const cartModal = document.createElement('div');
-    cartModal.className = 'cart-modal';
-    cartModal.innerHTML = `
-        <div class="cart-modal-content">
-            <div class="cart-header">
-                <h2>Shopping Cart</h2>
-                <button class="close-cart">×</button>
-            </div>
-            <div class="cart-content"></div>
+  constructor(){ this.items = JSON.parse(localStorage.getItem('cart'))||[]; this.updateCartCount(); }
+  save(){ localStorage.setItem('cart', JSON.stringify(this.items)); }
+  updateCartCount(){ const c = this.items.reduce((t,i)=>t+i.quantity,0); const el=document.querySelector('.cart-count'); if(el){ el.textContent=String(c); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); el.style.display = c>0 ? 'flex' : 'none'; } }
+  addItem(product){ const price = parseFloat(String(product.price).replace(/[^0-9.]/g,''))||0; const ex=this.items.find(i=>i.name===product.name); if(ex) ex.quantity+=1; else this.items.push({name:product.name,price,quantity:1,image:product.image}); this.save(); this.updateCartCount(); this.render(); const content=document.querySelector('.cart-modal-content'); if(content) content.scrollTop=0; }
+  removeItem(name){ this.items = this.items.filter(i=>i.name!==name); this.save(); this.updateCartCount(); this.render(); }
+  updateQuantity(name,q){ const item=this.items.find(i=>i.name===name); if(!item) return; item.quantity=Math.max(0,parseInt(q,10)||0); if(item.quantity<=0) this.removeItem(name); else { this.save(); this.updateCartCount(); this.render(); } }
+  total(){ return this.items.reduce((t,i)=>t+i.price*i.quantity,0).toFixed(2); }
+  render(){ const modal=document.getElementById('cartModal'); if(!modal) return; const content = modal.querySelector('.cart-content'); content.innerHTML=''; if(this.items.length===0){ content.innerHTML='<p class="empty-cart">Your cart is empty</p>'; return; } this.items.forEach(item=>{ const row=document.createElement('div'); row.className='cart-item'; row.innerHTML=`
+      <img src="${item.image}" alt="${item.name}">
+      <div>
+        <strong>${item.name}</strong>
+        <div style="color:#666">Price: $${item.price.toFixed(2)}</div>
+        <div class="quantity-controls">
+          <button class="quantity-btn minus">-</button>
+          <input type="number" class="quantity-input" min="1" value="${item.quantity}">
+          <button class="quantity-btn plus">+</button>
         </div>
-    `;
-    document.body.appendChild(cartModal);
-
-    // Initialize shopping cart
-    const cart = new ShoppingCart();
-
-    // Add event listeners for cart interaction
-    document.querySelectorAll('.btn-white').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            const productElement = this.closest('.product');
-            const product = {
-                name: productElement.querySelector('.product-name').textContent,
-                price: productElement.querySelector('.product-details p:last-child').textContent.split('-')[1].trim(),
-                image: productElement.querySelector('.main-image img').src
-            };
-            cart.addItem(product);
-            
-            // Show success message
-            const message = document.createElement('div');
-            message.className = 'success-message';
-            message.textContent = `Added ${product.name} to cart!`;
-            document.body.appendChild(message);
-            setTimeout(() => message.remove(), 2000);
-        });
+      </div>
+      <button class="remove-item">×</button>`; content.appendChild(row);
+      const minus=row.querySelector('.minus'); const plus=row.querySelector('.plus'); const input=row.querySelector('.quantity-input'); const remove=row.querySelector('.remove-item');
+      minus.addEventListener('click',()=>this.updateQuantity(item.name,item.quantity-1));
+      plus.addEventListener('click',()=>this.updateQuantity(item.name,item.quantity+1));
+      input.addEventListener('change',(e)=>this.updateQuantity(item.name,e.target.value));
+      remove.addEventListener('click',()=>this.removeItem(item.name));
     });
-
-    // Cart modal toggle
-    const cartIcon = document.querySelector('.fa-cart-shopping');
-    const closeCart = document.querySelector('.close-cart');
-
-    cartIcon.addEventListener('click', () => {
-        cartModal.style.display = 'block';
-        cart.updateCartUI();
-    });
-
-    closeCart.addEventListener('click', () => {
-        cartModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', (e) => {
-        if (e.target === cartModal) {
-            cartModal.style.display = 'none';
-        }
-    });
-});
+    const totalBar=document.createElement('div'); totalBar.className='cart-total'; totalBar.innerHTML=`<h3>Total: $${this.total()}</h3><button class="btn checkout-btn">Proceed to Checkout</button>`; content.appendChild(totalBar);
+    totalBar.querySelector('.checkout-btn').addEventListener('click',()=>alert('Checkout is a demo. Integrate with your backend/payment gateway.'));
+  }
+}
